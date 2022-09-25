@@ -7,7 +7,8 @@ function ColorPicker({setColor}){
         type="color"
         className="picker"
         value="#e66465"
-        onChange={e=>setColor(e.target.value)}
+        onChange={e=>{setColor(e.target.value); console.log(e.target.value)}}
+
         />
     </div>
   ) 

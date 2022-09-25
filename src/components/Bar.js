@@ -88,7 +88,9 @@ function Bar({setColor, setThickness, setElementType, undo, redo, alertButton}){
 
                     <div 
                         className="vl"
-                        style={{top: '28px', left: '380px'}}></div>
+                        style={{top: '28px', left: '380px'}}
+                        >
+                    </div>
 
                     <Button
                         style={{top: '55px', left: '410px'}}
@@ -141,18 +143,19 @@ function Bar({setColor, setThickness, setElementType, undo, redo, alertButton}){
 
 
                     <button
-                        className = 'do-button'
-                        style={{top: '35px', left: '1050px'}}
+                        className = 'undo-button'
+                        style={{top: '17px', left: '24px'}}
                         onClick = {undo}
                     >
                         Undo
                     </button>
 
                     <button
-                        className = 'do-button'
-                        style={{top: '35px', left: '1090px'}}
+                        className = 'redo-button'
+                        style={{top: '17px', left: '80px'}}
                         onClick = {redo}
-                        >Redo</button>
+                        >Redo
+                    </button>
 
                 </div>
         </Fragment>

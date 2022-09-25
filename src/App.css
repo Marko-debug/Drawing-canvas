@@ -39,3 +39,33 @@
   position: fixed;
   margin: 11px;
 }
+
+.undo-button{
+  display: inline-block;
+  position: fixed;
+  border: solid 2px rgba(190, 226, 202, 1);
+  border-radius: 13px;
+  padding: 5px 10px;
+  background-color:white;
+}
+
+.redo-button{
+  display: inline-block;
+  position: fixed;
+  border: solid 2px rgba(190, 226, 202, 1);
+  border-radius: 13px;
+  padding: 5px 10px;
+  background-color:white;
+}
+
+.undo-button:hover{
+  background-color: rgb(78, 163, 106);
+  border: none;
+  cursor: pointer;
+}
+
+.redo-button:hover{
+  background-color: rgb(78, 163, 106);
+  border: none;
+  cursor: pointer;
+}
