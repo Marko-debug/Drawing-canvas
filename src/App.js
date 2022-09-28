@@ -14,6 +14,8 @@ const createElement = (id, x1, y1, x2, y2, type) => {
             ? generator.line(x1, y1, x2, y2)
             : generator.rectangle(x1, y1, x2 - x1, y2 - y1);  
         return { id, x1, y1, x2, y2, type, roughElement}; 
+      case'eraser':
+        return {id, type, points: [{x: x1, y: y1}]}
       case 'pencil':
         return {id, type, points: [{x: x1, y: y1}]};
       case 'text':
@@ -169,9 +171,12 @@ const drawElement = (roughCanvas, context, element, thickness, color)=>{
       roughCanvas.draw(element.roughElement)
       break;
     case 'pencil':
-      const stroke = getSvgPathFromStroke(getStroke(element.points, {size: thickness, color: color}))
+      const stroke = getSvgPathFromStroke(getStroke(element.points, {size: thickness}))
       context.fill(new Path2D(stroke))
       //context.lineWidth = thickness; 
+      break;
+    case 'eraser':
+      eraser(element, context)
       break;
     case 'text':
       context.textBaseLine = 'top';
@@ -183,9 +188,19 @@ const drawElement = (roughCanvas, context, element, thickness, color)=>{
   }
 }
 
+const eraser = (element, context) => {
+
+  const points = element.points;
+  points.forEach(point => {
+
+    context.clearRect(point.x, point.y, 20, 20);
+  })
+  //canvasRef.current.globalCompositeOperation = 'destinvation-over';
+}
+
 const alertButton = () => {alert("I am not still working");}
 
-const adjustmentRequired = type => ['line', 'rectangle'].includes(type);
+const adjustmentRequired = type => ['line', 'rectangle', 'eraser'].includes(type);
 
 function App() {
   
@@ -200,7 +215,7 @@ function App() {
   const [action, setAction] = useState('none')
   const [elementType, setElementType] = useState('pencil')
   const [selectedElement, setSelectedElement] = useState(null)
-
+  
   useEffect(() => { 
     const canvas = canvasRef.current;
     canvas.width = window.innerWidth * 2;
@@ -211,12 +226,13 @@ function App() {
     const context = canvas.getContext("2d")
     context.scale(2,2);
     context.lineCap = "round"
-   
+    
     context.lineWidth = 5; 
     contextRef.current = context;
   }, [])
+
   
-  useEffect(() => {
+  /*useEffect(() => {
     if(canvasRef.current == null) return;
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d")
@@ -224,31 +240,32 @@ function App() {
     context.strokeStyle = color;
   }, [color])
   
-
+  
   useEffect(() => {
     if(canvasRef.current == null) return;
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d")
-
+    
     context.lineWidth = thickness; 
     
   }, [thickness])
-
+  */
+ 
 
  useLayoutEffect(()=>{
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
-
+    
     const roughCanvas = rough.canvas(canvas);
-
+    
     elements.forEach(element => {
       if(action === 'writing' && selectedElement.id === element.id) return;
       drawElement(roughCanvas, context, element, thickness, color)
     });
   }, [elements, action, selectedElement, thickness, color])
 
-
+  
   useEffect(()=>{
     const undoRedoFunction = event => {
       if((event.metaKey || event.ctrlKey) && event.key === 'z'){
@@ -272,17 +289,19 @@ function App() {
       textArea.value = selectedElement.text;
     }
   }, [action, selectedElement])
-
   
   const updateElement = (id, x1, y1, x2, y2, type, options) => {
     const elementsCopy = [...elements];
 
     switch(type){
       case 'line':
-      case 'rectangle':
-        elementsCopy[id] = createElement(id, x1, y1, x2, y2, type);
-        break;
+        case 'rectangle':
+          elementsCopy[id] = createElement(id, x1, y1, x2, y2, type);
+          break;
       case 'pencil':
+        elementsCopy[id].points = [...elementsCopy[id].points, {x:x2, y: y2}]
+        break;
+      case 'eraser':
         elementsCopy[id].points = [...elementsCopy[id].points, {x:x2, y: y2}]
         break;
       case 'text':
@@ -290,14 +309,13 @@ function App() {
         const textHeight = 24;
         elementsCopy[id] = {...createElement(id, x1, y1, x1 + textWidth , y1 + textHeight, type), text: options.text};
         break;
-      default:
-        throw new Error(`Type not recognised: ${type}`)
-    }
-    setElements(elementsCopy, true);
+        default:
+          throw new Error(`Type not recognised: ${type}`)
+      }
+      setElements(elementsCopy, true);
   } 
- 
-
-
+  
+  
   const startDrawing = (event) => {
     if(action === 'writing')return; 
 
@@ -324,7 +342,17 @@ function App() {
           setAction('resizing');
         }
       }
-    }else {
+    }
+    else if(elementType === 'eraser'){
+      
+      const id = elements.length;
+      const element = createElement(id, clientX, clientY, clientX, clientY, elementType)
+      setElements(prevState => [...prevState, element]);
+      setSelectedElement(element);
+
+      setAction('erasing')
+
+    }else{
       /*contextRef.current.beginPath()
       contextRef.current.moveTo(clientX, clientY)*/
       const id = elements.length;
@@ -350,13 +378,15 @@ function App() {
       const index = selectedElement.id;
       const {id, type} = elements[index];
 
-      if((action === 'drawing' || action === 'resizing') && adjustmentRequired(type)){
+      if((action === 'drawing' || action === 'resizing' || action === 'erasing') && adjustmentRequired(type)){
         const {x1, y1, x2, y2} = adjustElementCoordinates(elements[index]);
         updateElement(id, x1, y1, x2, y2, type);
       }
     }
-
+    
+    
     if(action === 'writing') return;
+
 
     setAction('none');
     setSelectedElement(null);
@@ -379,7 +409,13 @@ function App() {
       const index = elements.length - 1;
       const {x1, y1} = elements[index];
       updateElement(index, x1, y1, clientX, clientY, elementType);
-  
+
+    }else if(action === 'erasing'){
+
+      const index = elements.length -1;
+      const {x1, y1} = elements[index];
+      updateElement(index, x1, y1, clientX, clientY, elementType);
+
     }else if(action === 'moving'){
       if(selectedElement.type === 'pencil'){
         const newPoints = selectedElement.points.map((_, index) => ({
