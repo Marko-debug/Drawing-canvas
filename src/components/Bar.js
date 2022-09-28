@@ -106,7 +106,7 @@ function Bar({setColor, setThickness, setElementType, undo, redo, alertButton}){
                     </Button>
 
                     <Button
-                        onClick={()=>alertButton()}
+                        onClick={()=>setElementType('eraser')}
                         style={{top: '55px', left: '550px'}}>
                         Eraser
                     </Button>
