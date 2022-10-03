@@ -3,6 +3,7 @@ import Bar from './components/Bar';
 import rough from "roughjs/bundled/rough.esm";
 import getStroke from "perfect-freehand";
 
+
 const generator = rough.generator();
 
 const createElement = (id, x1, y1, x2, y2, type, thickness) => {
@@ -17,7 +18,7 @@ const createElement = (id, x1, y1, x2, y2, type, thickness) => {
       case'eraser':
         return {id, type, points: [{x: x1, y: y1}]}
       case 'pencil':
-        return {id, type, points: [{x: x1, y: y1}]};
+        return {id, type, points: [{x: x1, y: y1}], size: thickness};
       case 'text':
         return {id, type, x1, y1, x2, y2 ,text: '' }
       default:
@@ -171,9 +172,8 @@ const drawElement = (roughCanvas, context, element, thickness)=>{
       roughCanvas.draw(element.roughElement)
       break;
     case 'pencil':
-      const stroke = getSvgPathFromStroke(getStroke(element.points, {size: thickness}))
+      const stroke = getSvgPathFromStroke(getStroke(element.points))
       context.fill(new Path2D(stroke))
-      //context.lineWidth = thickness; 
       break;
     case 'eraser':
       eraser(element, context)
@@ -261,7 +261,7 @@ function App() {
     
     elements.forEach(element => {
       if(action === 'writing' && selectedElement.id === element.id) return;
-      drawElement(roughCanvas, context, element, thickness)
+      drawElement(roughCanvas, context, element)
     });
   }, [elements, action, selectedElement, thickness, color])
 

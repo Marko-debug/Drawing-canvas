@@ -38,7 +38,7 @@ export const ButtonRoller = styled.button`
   }
 `
 
-function Bar({setColor, setThickness, setElementType, undo, redo, alertButton}){    
+function Bar({setColor, setThickness, setElementType, undo, redo, alertButton, setAction}){    
 
     const [isOpenColor, setIsOpenColor] = useState(false)
     const [isOpenThickness, setIsOpenThickness] = useState(false)
@@ -85,7 +85,6 @@ function Bar({setColor, setThickness, setElementType, undo, redo, alertButton}){
 
 
 
-
                     <div 
                         className="vl"
                         style={{top: '28px', left: '380px'}}
@@ -100,7 +99,7 @@ function Bar({setColor, setThickness, setElementType, undo, redo, alertButton}){
                     </Button>
 
                     <Button
-                        onClick={()=>alertButton()}
+                        onClick={()=>{setAction('filling')}}
                         style={{top: '55px', left: '477px'}}>
                         Filling
                     </Button>
@@ -123,11 +122,17 @@ function Bar({setColor, setThickness, setElementType, undo, redo, alertButton}){
                         Clipping off
                     </Button>
 
-                    <Button
-                        onClick={()=>alertButton()}
-                        style={{top: '55px', left: '775px'}}>
-                        Insert some file
-                    </Button>
+                    <input 
+                        type="file"
+                        className="insert-file-input"
+                        hidden = 'hidden'
+                        />
+                    <button
+                        style={{top: '55px', left: '780px'}}
+                        className='insert-button'
+                        >
+                        Insert image
+                    </button>
 
                     <div className="vl"
                         style={{top: '28px', left: '930px'}}
@@ -138,6 +143,12 @@ function Bar({setColor, setThickness, setElementType, undo, redo, alertButton}){
                         style={{top: '55px', left: '960px'}}
                         onClick = {()=>setElementType('text')}>
                         Text
+                    </Button>
+
+                    <Button
+                        style={{top: '55px', left: '1015px'}}
+                        >
+                        Basket
                     </Button>
 
 
