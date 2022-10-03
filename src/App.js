@@ -5,14 +5,14 @@ import getStroke from "perfect-freehand";
 
 const generator = rough.generator();
 
-const createElement = (id, x1, y1, x2, y2, type) => {
+const createElement = (id, x1, y1, x2, y2, type, thickness) => {
     switch(type){
       case'line':
       case 'rectangle':
         const roughElement = 
           type === 'line'
-            ? generator.line(x1, y1, x2, y2)
-            : generator.rectangle(x1, y1, x2 - x1, y2 - y1);  
+            ? generator.line(x1, y1, x2, y2, {strokeWidth: thickness, stroke: 'rgb(255, 0, 0)'})
+            : generator.rectangle(x1, y1, x2 - x1, y2 - y1, {strokeWidth: thickness, stroke: 'rgb(255, 0, 0)', fill: 'rgb(255, 0, 0)'});  
         return { id, x1, y1, x2, y2, type, roughElement}; 
       case'eraser':
         return {id, type, points: [{x: x1, y: y1}]}
@@ -164,7 +164,7 @@ const getSvgPathFromStroke = stroke => {
   return d.join(' ');
 };
 
-const drawElement = (roughCanvas, context, element, thickness, color)=>{
+const drawElement = (roughCanvas, context, element, thickness)=>{
   switch(element.type){
     case 'line':
     case 'rectangle':
@@ -261,7 +261,7 @@ function App() {
     
     elements.forEach(element => {
       if(action === 'writing' && selectedElement.id === element.id) return;
-      drawElement(roughCanvas, context, element, thickness, color)
+      drawElement(roughCanvas, context, element, thickness)
     });
   }, [elements, action, selectedElement, thickness, color])
 
@@ -296,7 +296,7 @@ function App() {
     switch(type){
       case 'line':
         case 'rectangle':
-          elementsCopy[id] = createElement(id, x1, y1, x2, y2, type);
+          elementsCopy[id] = createElement(id, x1, y1, x2, y2, type, thickness);
           break;
       case 'pencil':
         elementsCopy[id].points = [...elementsCopy[id].points, {x:x2, y: y2}]
@@ -448,7 +448,6 @@ function App() {
     btn.addEventListener('click', ()=>{
       
       const initialText = 'Open';
-
       if(btn.textContent.toLowerCase().includes(initialText.toLowerCase()))
         btn.textContent = 'X';d
       else{
