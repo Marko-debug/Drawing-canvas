@@ -3,17 +3,16 @@ import Bar from './components/Bar';
 import rough from "roughjs/bundled/rough.esm";
 import getStroke from "perfect-freehand";
 
-
 const generator = rough.generator();
 
-const createElement = (id, x1, y1, x2, y2, type, thickness) => {
+const createElement = (id, x1, y1, x2, y2, type, thickness, color) => {
     switch(type){
       case'line':
       case 'rectangle':
         const roughElement = 
           type === 'line'
-            ? generator.line(x1, y1, x2, y2, {strokeWidth: thickness, stroke: 'rgb(255, 0, 0)'})
-            : generator.rectangle(x1, y1, x2 - x1, y2 - y1, {strokeWidth: thickness, stroke: 'rgb(255, 0, 0)', fill: 'rgb(255, 0, 0)'});  
+            ? generator.line(x1, y1, x2, y2, {strokeWidth: thickness, stroke: color})
+            : generator.rectangle(x1, y1, x2 - x1, y2 - y1, {strokeWidth: thickness, stroke: color, fill: color});  
         return { id, x1, y1, x2, y2, type, roughElement}; 
       case'eraser':
         return {id, type, points: [{x: x1, y: y1}]}
@@ -296,7 +295,7 @@ function App() {
     switch(type){
       case 'line':
         case 'rectangle':
-          elementsCopy[id] = createElement(id, x1, y1, x2, y2, type, thickness);
+          elementsCopy[id] = createElement(id, x1, y1, x2, y2, type, thickness, color);
           break;
       case 'pencil':
         elementsCopy[id].points = [...elementsCopy[id].points, {x:x2, y: y2}]
@@ -356,7 +355,7 @@ function App() {
       /*contextRef.current.beginPath()
       contextRef.current.moveTo(clientX, clientY)*/
       const id = elements.length;
-      const element = createElement(id, clientX, clientY, clientX, clientY, elementType); 
+      const element = createElement(id, clientX, clientY, clientX, clientY, elementType, thickness, color); 
       setElements(prevState => [...prevState, element]);
       setSelectedElement(element)
 

@@ -44,6 +44,7 @@ function Bar({setColor, setThickness, setElementType, undo, redo, alertButton, s
     const [isOpenThickness, setIsOpenThickness] = useState(false)
     const [isOpenShape, setIsOpenShape] = useState(false)
 
+    console.log(isOpenColor)
     return(
         <Fragment>
                 <div
@@ -55,7 +56,7 @@ function Bar({setColor, setThickness, setElementType, undo, redo, alertButton, s
                     style={{top: '55px', left: '38px'}}
                     >
                         Color
-                    { isOpenColor ? <ColorPicker setColor={setColor}/> : null}
+                    <ColorPicker setColor={setColor}/> 
                     </ButtonRoller>
 
                     <ButtonRoller

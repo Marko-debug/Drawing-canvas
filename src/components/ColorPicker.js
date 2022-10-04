@@ -6,8 +6,8 @@ function ColorPicker({setColor}){
       <input
         type="color"
         className="picker"
-        value="#e66465"
-        onChange={e=>{setColor(e.target.value); console.log(e.target.value)}}
+        // value="#e66465"
+        onChange={e=>{console.log("change");setColor(e.target.value); console.log(e.target.value)}}
 
         />
     </div>
