@@ -295,6 +295,8 @@ function App() {
     switch(type){
       case 'line':
         case 'rectangle':
+          console.log(id)
+          console.log(x1)
           elementsCopy[id] = createElement(id, x1, y1, x2, y2, type, thickness, color);
           break;
       case 'pencil':

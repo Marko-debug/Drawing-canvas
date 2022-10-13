@@ -44,7 +44,6 @@ function Bar({setColor, setThickness, setElementType, undo, redo, alertButton, s
     const [isOpenThickness, setIsOpenThickness] = useState(false)
     const [isOpenShape, setIsOpenShape] = useState(false)
 
-    console.log(isOpenColor)
     return(
         <Fragment>
                 <div
